@@ -80,8 +80,6 @@ class Pagination {
       this.paginationArray.push(createPage(totalPages, false));
     }
 
-    
-
     // tack on Previous & Next buttons
     if (currentPage != 1) {
       this.paginationArray.unshift(createPage("Previous", false));
@@ -107,6 +105,16 @@ function createPage(pageNo, isCurrent) {
   return pageObject;
 }
 var scenarios = [
+  {
+    totalPages: 1,
+    currentPage: 1,
+    expected: "[1*]",
+  },
+  {
+    totalPages: 2,
+    currentPage: 2,
+    expected: "[Previous][1][2*]",
+  },
   {
     totalPages: 3,
     currentPage: 1,
