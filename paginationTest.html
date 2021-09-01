@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Pagination Test Scenarios</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://designsystem.digital.gov/assets/css/styles.css"
+    />
+    <script src="https://designsystem.digital.gov/assets/js/vendor/uswds-init.min.js"></script>
+    <link
+      rel="preload"
+      href="https://designsystem.digital.gov/assets/js/vendor/uswds.min.js"
+      as="script"
+    />
+    <script
+      src="https://kit.fontawesome.com/4fe7aa5c65.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="grid-container">
+      <div class="grid-row">
+        <h1>Pagination Test Scenarios</h1>
+      </div>
+      <div class="grid-row">
+        <div class="usa-alert usa-alert--info usa-alert--slim">
+          <div class="usa-alert__body">
+            <p class="usa-alert__text">
+              The current page is denoted by a "*" in each expected and actual
+              output.
+            </p>
+          </div>
+        </div>
+        <table class="usa-table usa-table--borderless">
+          <thead>
+            <tr>
+              <th>Pass/ Fail</th>
+              <th>Current Page</th>
+              <th>Total Pages</th>
+              <th>Expected</th>
+              <th>Actual</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+  <script src="paginationTest.js"></script>
+</html>
