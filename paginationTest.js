@@ -109,102 +109,135 @@ var scenarios = [
     totalPages: 1,
     currentPage: 1,
     expected: "[1*]",
+    explanation: "",
   },
   {
     totalPages: 2,
     currentPage: 2,
     expected: "[Previous][1][2*]",
+    explanation: "",
   },
   {
     totalPages: 3,
     currentPage: 1,
     expected: "[1*][2][3][Next]",
+    explanation: "Remove extra slots if there are fewer than 7 pages.",
   },
   {
     totalPages: 3,
     currentPage: 2,
     expected: "[Previous][1][2*][3][Next]",
+    explanation:
+      "A three-page set shows three pages. Slot two is current. There is a 'previous' link preceding the items. There is a 'next' link following the items.",
   },
   {
     totalPages: 3,
     currentPage: 3,
     expected: "[Previous][1][2][3*]",
+    explanation:
+      "A three-page set shows three pages. Page 3 is current. There is a 'previous' link preceding the items. There is no 'next' link.",
   },
   {
     totalPages: 7,
     currentPage: 1,
     expected: "[1*][2][3][4][5][6][7][Next]",
+    explanation: "Remove extra slots if there are fewer than 7 pages.",
   },
   {
     totalPages: 7,
     currentPage: 2,
     expected: "[Previous][1][2*][3][4][5][6][7][Next]",
+    explanation:
+      "A seven-page set shows seven pages. Page 2 is current. There are 'previous' and 'next' links bookending the set.",
   },
   {
     totalPages: 8,
     currentPage: 1,
     expected: "[1*][2][3][4][5][...][8][Next]",
+    explanation:
+      "A eight-page set. Page 1 is the current page. Instance shows pages 1 to 5 in slots 1 to 5. Slot 6 is overflow. Slot 7 page 8.",
   },
   {
     totalPages: 8,
     currentPage: 2,
     expected: "[Previous][1][2*][3][4][5][...][8][Next]",
+    explanation:
+      "A eight-page set. Page 2 is the current page. Instance shows pages 1 to 5 in slots 1 to 5. Slot 6 is overflow. Slot 7 page 8.",
   },
   {
     totalPages: 8,
     currentPage: 3,
     expected: "[Previous][1][2][3*][4][5][...][8][Next]",
+    explanation:
+      "A eight-page set. Page 3 is the current page. Instance shows pages 1 to 5 in slots 1 to 5. Slot 6 is overflow. Slot 7 page 8.",
   },
   {
     totalPages: 8,
     currentPage: 4,
     expected: "[Previous][1][2][3][4*][5][...][8][Next]",
+    explanation:
+      "A eight-page set shows pages 1 to 5 in slots 1 to 5. Slot 4 is current. Slot 6 shows an overflow indicator. Slot 7 shows page 8.",
   },
   {
     totalPages: 8,
     currentPage: 5,
     expected: "[Previous][1][...][4][5*][6][7][8][Next]",
+    explanation:
+      "A eight-page set. Page 5 is the current page. Instance shows page 1 in Slot 1. Slot 2 is overflow. Pages 4 to 8 appear in slots 3 to 7.",
   },
   {
     totalPages: 8,
     currentPage: 6,
     expected: "[Previous][1][...][4][5][6*][7][8][Next]",
+    explanation:
+      "A eight-page set. Page 6 is the current page. Instance shows page 1 in Slot 1. Slot 2 is overflow. Pages 4 to 8 appear in slots 3 to 7.",
   },
   {
     totalPages: 8,
     currentPage: 7,
     expected: "[Previous][1][...][4][5][6][7*][8][Next]",
+    explanation:
+      "An eight-page set. Page 7 is the current page. Instance shows page 1 in slot 1. Slot 2 is overflow, pages 4 to 8 appear in slots 3 to 7.",
   },
   {
     totalPages: 8,
     currentPage: 8,
     expected: "[Previous][1][...][4][5][6][7][8*]",
+    explanation:
+      "An eight-page set. Page 8 is current page. Instance shows page 1 in Slot 1. Slot 2 is overflow. Pages 4 to 8 appear in slots 3 to 7.",
   },
   {
     totalPages: 9,
     currentPage: 5,
     expected: "[Previous][1][...][4][5*][6][...][9][Next]",
+    explanation:
+      "A nine-page set. Page 5 is the current page. Instance shows page 1 in Slot 1. Slot 2 is overflow. Slots 3 to 5 contain Pages 4, 5, and 6. Slot 6 is overflow. Slot 7 is page 9.",
   },
   {
     totalPages: 25,
     currentPage: 5,
     expected: "[Previous][1][...][4][5*][6][...][25][Next]",
+    explanation:
+      "A large page set (>10). Page 5 is the current page. Instance shows page 1 in Slot 1. Slot 2 is overflow. Slots 3 to 5 contain Pages 4, 5, and 6. Slot 6 is overflow. Slot 7 is page 25.",
   },
 
   {
     totalPages: 25,
     currentPage: 23,
     expected: "[Previous][1][...][21][22][23*][24][25][Next]",
+    explanation: "",
   },
   {
     totalPages: 25,
     currentPage: 24,
     expected: "[Previous][1][...][21][22][23][24*][25][Next]",
+    explanation: "",
   },
   {
     totalPages: 25,
     currentPage: 25,
     expected: "[Previous][1][...][21][22][23][24][25*]",
+    explanation: "",
   },
 ];
 
@@ -223,6 +256,7 @@ for (var j = 0; j < scenarios.length; j++) {
       : '<span style="color: red"><i class="fas fa-times-circle"></i></span>';
   row.insertCell(1).innerHTML = scenarios[j].currentPage;
   row.insertCell(2).innerHTML = scenarios[j].totalPages;
-  row.insertCell(3).innerHTML = scenarios[j].expected;
-  row.insertCell(4).innerHTML = pager1.toString();
+  row.insertCell(3).innerHTML = scenarios[j].explanation;
+  row.insertCell(4).innerHTML = scenarios[j].expected;
+  row.insertCell(5).innerHTML = pager1.toString();
 }
