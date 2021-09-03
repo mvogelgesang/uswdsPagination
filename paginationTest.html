@@ -25,25 +25,83 @@
       <div class="grid-row">
         <h1>Pagination Test Scenarios</h1>
       </div>
-      <div class="grid-row">
-        <div class="usa-alert usa-alert--info usa-alert--slim">
-          <div class="usa-alert__body">
-            <p class="usa-alert__text">
-              The current page is denoted by a "*" in each expected and actual
-              output.
-            </p>
+      <div class="grid-row grid-gap">
+        <div class="tablet:grid-col-6">
+          <div
+            class="usa-summary-box"
+            role="region"
+            aria-labelledby="summary-box-key-information"
+          >
+            <div class="usa-summary-box__body">
+              <h3
+                class="usa-summary-box__heading"
+                id="summary-box-key-information"
+              >
+                Pagination Rules and Guidance
+              </h3>
+              <div class="usa-summary-box__text">
+                <ul class="usa-list">
+                  <li>Currently only covers bounded set scenarios.</li>
+                  <li>
+                    The current page is denoted by a "*" in each expected and
+                    actual output.
+                  </li>
+                  <li>
+                    Display at most, 9 elements which includes Previous, Next,
+                    Page Numbers, and Overflow indicators (...)
+                  </li>
+                  <li>
+                    If 7 or less pages exist, truncate page number list to equal
+                    the number of pages present
+                  </li>
+                  <li>
+                    Always display first, last, current, next, and previous page
+                    numbers (e.g. [1][...][7][8*][9][...][22])
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
+        <div class="tablet:grid-col-6">
+          <h3>Is a scenario missing? Try it here</h3>
+          <form id="paginationTestForm" onsubmit="return false">
+            <label for="totalPages" class="usa-label"
+              >Total Number of Pages</label
+            >
+            <input
+              type="number"
+              class="usa-input usa-input--sm"
+              id="totalPages"
+            />
+            <label for="currentPage" class="usa-label">Current Page</label>
+            <input
+              type="number"
+              class="usa-input usa-input--sm"
+              id="currentPage"
+            />
+            <input
+              class="usa-button"
+              type="submit"
+              value="Go!"
+              onclick="testPagination()"
+            />
+          </form>
+          <div class="grid-row">
+            <p id="testResult"></p>
+          </div>
+        </div>
+      </div>
+      <div class="grid-row">
         <table class="usa-table usa-table--borderless">
           <thead>
             <tr>
-              <th>Pass/ Fail (old)</th>
-              <th>Pass/ Fail (refactor)</th>
+              <th>Pass/ Fail</th>
               <th>Current Page</th>
               <th>Total Pages</th>
               <th>Guidance</th>
               <th>Expected</th>
-              <th>Actual (refactor)</th>
+              <th>Actual</th>
             </tr>
           </thead>
           <tbody id="tbody"></tbody>
