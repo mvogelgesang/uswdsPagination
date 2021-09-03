@@ -4,8 +4,18 @@
 // console.log("current page: " + currentPage);
 
 class Pagination {
-  constructor() {
+  constructor(totalPages, currentPage) {
+    this.maxSlots = 7;
+    this.overflowIndicator = "...";
+
+    this.magicNumber = Math.round(this.maxSlots / 2);
+    this.totalPages = totalPages;
+    this.currentPage = currentPage;
     this.paginationArray = [];
+    this.slots;
+    console.log(
+      `New Pagination...\nTotal Pages: ${this.totalPages}\nCurrent Page: ${this.currentPage}`
+    );
   }
 
   buildPagination(totalPages, currentPage) {
@@ -22,23 +32,23 @@ class Pagination {
       for (var i = currentPage - 1; i >= currentPage - 4; i--) {
         this.paginationArray.unshift(createPage(i, false));
       }
-      this.paginationArray.unshift(createPage("...", false));
+      this.paginationArray.unshift(createPage(this.overflowIndicator, false));
       this.paginationArray.unshift(createPage(1, false));
     } else if (totalPages - currentPage < 2 && currentPage >= 7) {
       for (var i = currentPage - 1; i >= currentPage - 3; i--) {
         this.paginationArray.unshift(createPage(i, false));
       }
-      this.paginationArray.unshift(createPage("...", false));
+      this.paginationArray.unshift(createPage(this.overflowIndicator, false));
       this.paginationArray.unshift(createPage(1, false));
     } else if (totalPages - currentPage < 3 && currentPage >= 6) {
       for (var i = currentPage - 1; i >= currentPage - 2; i--) {
         this.paginationArray.unshift(createPage(i, false));
       }
-      this.paginationArray.unshift(createPage("...", false));
+      this.paginationArray.unshift(createPage(this.overflowIndicator, false));
       this.paginationArray.unshift(createPage(1, false));
     } else if (currentPage - 1 > 3) {
       this.paginationArray.unshift(createPage(currentPage - 1, false));
-      this.paginationArray.unshift(createPage("...", false));
+      this.paginationArray.unshift(createPage(this.overflowIndicator, false));
       this.paginationArray.unshift(createPage(1, false));
     } else if (currentPage - 1 == 3) {
       this.paginationArray.unshift(createPage(currentPage - 1, false));
@@ -60,10 +70,10 @@ class Pagination {
       for (var i = currentPage + 1; i < 6; i++) {
         this.paginationArray.push(createPage(i, false));
       }
-      this.paginationArray.push(createPage("...", false));
+      this.paginationArray.push(createPage(this.overflowIndicator, false));
     } else if (totalPages - currentPage > 3) {
       this.paginationArray.push(createPage(currentPage + 1, false));
-      this.paginationArray.push(createPage("...", false));
+      this.paginationArray.push(createPage(this.overflowIndicator, false));
     } else if (totalPages - currentPage == 3) {
       this.paginationArray.push(createPage(currentPage + 1, false));
       this.paginationArray.push(createPage(currentPage + 2, false));
@@ -88,7 +98,85 @@ class Pagination {
       this.paginationArray.push(createPage("Next", false));
     }
   }
+  buildPaginationRefactor() {
+    this.calculateNoSlots();
+    this.createSlots();
+    this.fillSlots();
+    this.placePrevNext();
+    console.log(this.paginationArray);
+  }
+
+  calculateNoSlots() {
+    this.slots =
+      this.totalPages <= this.maxSlots ? this.totalPages : this.maxSlots;
+  }
+
+  createSlots() {
+    for (var i = 0; i < this.slots; i++) {
+      this.paginationArray.push("");
+    }
+  }
+
+  fillSlot(index, pageNo, isCurrent) {
+    this.paginationArray[index] = createPage(pageNo, isCurrent);
+  }
+
+  fillSlots() {
+    // if total pages is less than 7, just count upwards from 1 and denote current page
+    if (this.totalPages <= 7) {
+      for (var i = 0; i < this.totalPages; i++) {
+        this.fillSlot(i, i + 1, this.currentPage - 1 == i ? true : false);
+      }
+    }
+    // more than 4 from first and last page, the current page must land in the middle slot (4)
+    else if (
+      this.currentPage > this.magicNumber &&
+      this.totalPages - this.currentPage >= this.magicNumber
+    ) {
+      this.fillSlot(0, 1, false);
+      this.fillSlot(1, this.overflowIndicator, false);
+      this.fillSlot(2, this.currentPage - 1, false);
+      this.fillSlot(this.magicNumber - 1, this.currentPage, true);
+      this.fillSlot(4, this.currentPage + 1, false);
+      this.fillSlot(5, this.overflowIndicator, false);
+      this.fillSlot(6, this.totalPages, false);
+    }
+    // within 4 of the first page
+    else if (this.currentPage <= this.magicNumber) {
+      for (var i = 0; i <= 4; i++) {
+        this.fillSlot(i, i + 1, this.currentPage - 1 == i ? true : false);
+      }
+      this.fillSlot(5, this.overflowIndicator, false);
+      this.fillSlot(6, this.totalPages, false);
+    }
+    // within 4 of the last page
+    else if (this.totalPages - this.currentPage <= this.magicNumber) {
+      this.fillSlot(0, 1, false);
+      this.fillSlot(1, this.overflowIndicator, false);
+      for (
+        var index = 2, pageNo = this.totalPages - 4;
+        index <= 6;
+        index++, pageNo++
+      ) {
+        this.fillSlot(index, pageNo, this.currentPage == pageNo ? true : false);
+      }
+    }
+  }
+
+  completeEmptySlots() {
+    // get currentPage slot number
+  }
+
+  placePrevNext() {
+    if (this.currentPage != 1) {
+      this.paginationArray.unshift(createPage("Previous", false));
+    }
+    if (this.currentPage != this.totalPages) {
+      this.paginationArray.push(createPage("Next", false));
+    }
+  }
 }
+
 Pagination.prototype.toString = function paginationToString() {
   var outputString = "";
   for (var i = 0; i < this.paginationArray.length; i++) {
@@ -241,10 +329,18 @@ var scenarios = [
   },
 ];
 
+/// RUN TESTS
 for (var j = 0; j < scenarios.length; j++) {
-  var pager1 = new Pagination();
+  var pager1 = new Pagination(
+    scenarios[j].totalPages,
+    scenarios[j].currentPage
+  );
   pager1.buildPagination(scenarios[j].totalPages, scenarios[j].currentPage);
-
+  var pagerRef = new Pagination(
+    scenarios[j].totalPages,
+    scenarios[j].currentPage
+  );
+  pagerRef.buildPaginationRefactor();
   var table = document.getElementById("tbody");
   // Create an empty <tr> element and add it to the 1st position of the table:
   let row = table.insertRow(-1);
@@ -254,9 +350,13 @@ for (var j = 0; j < scenarios.length; j++) {
     pager1.toString() == scenarios[j].expected
       ? '<span style="color: green"><i class="fas fa-check-circle"></i></span>'
       : '<span style="color: red"><i class="fas fa-times-circle"></i></span>';
-  row.insertCell(1).innerHTML = scenarios[j].currentPage;
-  row.insertCell(2).innerHTML = scenarios[j].totalPages;
-  row.insertCell(3).innerHTML = scenarios[j].explanation;
-  row.insertCell(4).innerHTML = scenarios[j].expected;
-  row.insertCell(5).innerHTML = pager1.toString();
+  row.insertCell(1).innerHTML =
+    pagerRef.toString() == scenarios[j].expected
+      ? '<span style="color: green"><i class="fas fa-check-circle"></i></span>'
+      : '<span style="color: red"><i class="fas fa-times-circle"></i></span>';
+  row.insertCell(2).innerHTML = scenarios[j].currentPage;
+  row.insertCell(3).innerHTML = scenarios[j].totalPages;
+  row.insertCell(4).innerHTML = scenarios[j].explanation;
+  row.insertCell(5).innerHTML = scenarios[j].expected;
+  row.insertCell(6).innerHTML = pagerRef.toString();
 }
