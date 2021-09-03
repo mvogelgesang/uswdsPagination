@@ -61,7 +61,7 @@ class Pagination {
       this.fillSlot(1, this.overflowIndicator, false);
       this.fillSlot(2, this.currentPage - 1, false);
       this.fillSlot(this.magicNumber - 1, this.currentPage, true);
-      this.fillSlot(4, this.currentPage + 1, false);
+      this.fillSlot(4, Number(this.currentPage) + 1, false);
       this.fillSlot(5, this.overflowIndicator, false);
       this.fillSlot(6, this.totalPages, false);
     }
