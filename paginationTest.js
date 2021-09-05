@@ -1,5 +1,4 @@
 function testPagination() {
-  console.log("fire!");
   var totalPages = document.getElementById("totalPages").value;
   var currentPage = document.getElementById("currentPage").value;
   var testPagination = new Pagination(totalPages, currentPage);
@@ -8,48 +7,85 @@ function testPagination() {
 }
 
 class Pagination {
-  constructor(totalPages, currentPage) {
-    this.maxSlots = 7;
-    this.overflowIndicator = "...";
-
+  /**
+   * Constructs a pagination class.
+   * @param {number} totalPages total number of pages in the set
+   * @param {number} currentPage current page number
+   * @param {number} maxSlots=7 maximum number of slots to display
+   * @param {string} overflowIndicator="..." placeholder to indicate that page numbers are not displayed
+   */
+  constructor(
+    totalPages,
+    currentPage,
+    maxSlots = 7,
+    overflowIndicator = "..."
+  ) {
+    this.maxSlots = maxSlots;
+    this.overflowIndicator = overflowIndicator;
     this.magicNumber = Math.round(this.maxSlots / 2);
     this.totalPages = totalPages;
     this.currentPage = currentPage;
     this.paginationArray = [];
     this.slots;
     console.log(
-      `New Pagination...\nTotal Pages: ${this.totalPages}\nCurrent Page: ${this.currentPage}`
+      `New Pagination initialized...\nTotal Pages: ${this.totalPages}\nCurrent Page: ${this.currentPage}`
     );
   }
 
+  /**
+   * Constructs the dataset
+   */
   buildPagination() {
     this.calculateNoSlots();
+
     this.createSlots();
+
     this.fillSlots();
+
     this.placePrevNext();
-    console.log(this.paginationArray);
   }
 
+  /**
+   * Determines the number of slots to create for the pagination array. USWDS guidance says not to create excess slots. If  total slots are less than the max number of slots, just create the total number.
+   */
   calculateNoSlots() {
     this.slots =
       this.totalPages <= this.maxSlots ? this.totalPages : this.maxSlots;
   }
 
+  /**
+   * Creates an empty array with a set number of slots
+   */
   createSlots() {
     for (var i = 0; i < this.slots; i++) {
       this.paginationArray.push("");
     }
   }
 
-  fillSlot(index, pageNo, isCurrent) {
-    this.paginationArray[index] = createPage(pageNo, isCurrent);
+  /**
+   * Inserts a page at a given index number
+   * @param {number} index Array location where value should be inserted
+   * @param {(number|string)} pageNo Number or overflow indicator of the page that is being created
+   * @param {boolean} isCurrent Denotes whether or not page number is current
+   * @param {boolean} isLast Denotes whether or not page number is the last page
+   */
+  fillSlot(index, pageNo, isCurrent, isLast = false) {
+    this.paginationArray[index] = this.createPage(pageNo, isCurrent, isLast);
   }
 
+  /**
+   * Complets the body of the pagination component page numbers and overflow indicators.
+   */
   fillSlots() {
     // if total pages is less than 7, just count upwards from 1 and denote current page
     if (this.totalPages <= 7) {
       for (var i = 0; i < this.totalPages; i++) {
-        this.fillSlot(i, i + 1, this.currentPage - 1 == i ? true : false);
+        this.fillSlot(
+          i,
+          i + 1,
+          this.currentPage - 1 == i ? true : false,
+          i == this.totalPages ? true : false
+        );
       }
     }
     // more than 4 from first and last page, the current page must land in the middle slot (4)
@@ -63,7 +99,7 @@ class Pagination {
       this.fillSlot(this.magicNumber - 1, this.currentPage, true);
       this.fillSlot(4, Number(this.currentPage) + 1, false);
       this.fillSlot(5, this.overflowIndicator, false);
-      this.fillSlot(6, this.totalPages, false);
+      this.fillSlot(6, this.totalPages, false, true);
     }
     // within 4 of the first page
     else if (this.currentPage <= this.magicNumber) {
@@ -71,7 +107,7 @@ class Pagination {
         this.fillSlot(i, i + 1, this.currentPage - 1 == i ? true : false);
       }
       this.fillSlot(5, this.overflowIndicator, false);
-      this.fillSlot(6, this.totalPages, false);
+      this.fillSlot(6, this.totalPages, false, true);
     }
     // within 4 of the last page
     else if (this.totalPages - this.currentPage <= this.magicNumber) {
@@ -82,25 +118,59 @@ class Pagination {
         index <= 6;
         index++, pageNo++
       ) {
-        this.fillSlot(index, pageNo, this.currentPage == pageNo ? true : false);
+        this.fillSlot(
+          index,
+          pageNo,
+          this.currentPage == pageNo ? true : false,
+          pageNo == this.totalPages ? true : false
+        );
       }
     }
   }
 
-  completeEmptySlots() {
-    // get currentPage slot number
-  }
-
+  /**
+   * Pushes or unshifts Next/Previous page to pagination set
+   */
   placePrevNext() {
     if (this.currentPage != 1) {
-      this.paginationArray.unshift(createPage("Previous", false));
+      this.paginationArray.unshift(this.createPage("Previous", false));
     }
     if (this.currentPage != this.totalPages) {
-      this.paginationArray.push(createPage("Next", false));
+      this.paginationArray.push(this.createPage("Next", false));
     }
+  }
+
+  /**
+   * Creates a page object
+   * @param {number} pageNo Page number
+   * @param {boolean} isCurrent Denotes if page number is the current page
+   * @param {boolean} isLast Denotes if this is the last page in the set
+   * @return {Object} pageObject
+   */
+  createPage(pageNo, isCurrent, isLast = false) {
+    var type = "";
+    if (typeof pageNo == "number") {
+      type = "Page Number";
+    } else if (pageNo == this.overflowIndicator) {
+      type = "Overflow";
+      // if not a number or overflow, just use pageNo contents
+    } else {
+      type = pageNo;
+    }
+    var pageObject = {
+      content: pageNo,
+      isCurrent: isCurrent,
+      type: type,
+      isLast: isLast,
+    };
+    return pageObject;
   }
 }
 
+/**
+ * Prints a string representation of all slots in a pagination array
+ * @return {string}
+ */
 Pagination.prototype.toString = function paginationToString() {
   var outputString = "";
   for (var i = 0; i < this.paginationArray.length; i++) {
@@ -112,10 +182,6 @@ Pagination.prototype.toString = function paginationToString() {
   return outputString;
 };
 
-function createPage(pageNo, isCurrent) {
-  var pageObject = { content: pageNo, isCurrent: isCurrent };
-  return pageObject;
-}
 var scenarios = [
   {
     totalPages: 1,
